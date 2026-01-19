@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Deteksi Suhu Ruangan AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, #000000, #7f1d1d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #111111;
+      padding: 30px;
+      width: 360px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(255,0,0,0.25);
+      text-align: center;
+      color: #f9fafb;
+      border: 2px solid #facc15;
+      animation: fadeIn 0.8s ease;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #facc15;
+    }
+
+    p.desc {
+      font-size: 14px;
+      color: #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #374151;
+      font-size: 16px;
+      margin-bottom: 15px;
+      outline: none;
+      background: #000;
+      color: #f9fafb;
+    }
+
+    input:focus {
+      border-color: #facc15;
+      box-shadow: 0 0 8px rgba(250,204,21,0.8);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(220,38,38,0.6);
+    }
+
+    #hasil {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #000;
+      font-weight: 500;
+      display: none;
+      border: 2px solid #facc15;
+      color: #facc15;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>🌡️ Deteksi Suhu AI</h2>
+    <p class="desc">
+      Sistem monitoring suhu ruangan berbasis Artificial Intelligence
+    </p>
+
+    <input type="number" id="suhu" placeholder="Masukkan suhu (°C)">
+
+    <button onclick="cek()">CEK SUHU</button>
+
+    <div id="hasil"></div>
+  </div>
+
+  <script>
+    function cek() {
+      let suhu = document.getElementById("suhu").value;
+
+      if (suhu === "") {
+        alert("Masukkan suhu terlebih dahulu!");
+        return;
+      }
+
+      fetch("https://michale-untemperable-wispily.ngrok-free.dev/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ suhu: parseInt(suhu) })
+      })
+      .then(response => response.json())
+      .then(data => {
+        let hasil = document.getElementById("hasil");
+        hasil.style.display = "block";
+        hasil.innerHTML = `
+          🔥 Suhu: <b>${data.suhu}°C</b><br>
+          ⚠️ Kondisi: <b>${data.kondisi}</b>
+        `;
+      })
+      .catch(error => {
+        alert("Gagal terhubung ke server AI");
+        console.error(error);
+      });
+    }
+  </script>
+
+</body>
+</html>
